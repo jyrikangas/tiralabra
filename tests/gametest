@@ -1,0 +1,8 @@
+import unittest
+
+class GameTest(unittest.TestCase):
+    
+    def setUp(self) -> None:
+        return super().setUp()
+
+    

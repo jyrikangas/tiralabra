@@ -6,4 +6,5 @@ tiralabra shakki tekoäly
 
 
 [viikkoraportti 1](https://github.com/jyrikangas/tiralabra/blob/main/viikkoraportti.md)
+
 [viikkoraportti 2](https://github.com/jyrikangas/tiralabra/blob/main/viikkoraportti2.md)

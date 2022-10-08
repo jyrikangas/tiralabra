@@ -1,6 +1,6 @@
 
+
 class Move(object):
-    
     def __init__(self, square, squarecontent):
         self.square = square
         if squarecontent != 0:

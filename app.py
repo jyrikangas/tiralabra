@@ -372,28 +372,34 @@ def main():
                 validmoves(blackpieces, board)
                 if ev.button == 1:
                     print(pygame.mouse.get_pos())
-                    clickedSquare = board[int(pygame.mouse.get_pos()[1]/60)][int(pygame.mouse.get_pos()[0]/60)]
+                    clickedSquare = board[7-int(pygame.mouse.get_pos()[1]/60)][int(pygame.mouse.get_pos()[0]/60)]
                     if clickedSquare != 0:
                         while(True):
-                            ev = pygame.event.poll()
-                            if ev.type == pygame.QUIT:
+                            ev1 = pygame.event.poll()
+                            if ev1.type == pygame.QUIT:
                                 break;
-                            if ev.type == MOUSEBUTTONDOWN:
-                                if ev.button == 1:
+                            if ev1.type == MOUSEBUTTONDOWN:
+                                if ev1.button == 1:
                                     print(pygame.mouse.get_pos())
-                                    clickedSquare2 = board[int(pygame.mouse.get_pos()[1]/60)][int(pygame.mouse.get_pos()[0]/60)]
-                                    if clickedSquare2 == 0:
-                                        break;
+                                    clickedSquare2 = (7-int(pygame.mouse.get_pos()[1]/60),int(pygame.mouse.get_pos()[0]/60))
+                                    print(clickedSquare2)
+                                    
                                     for move in clickedSquare.moves:
-                                        if clickedSquare2.position[0]==clickedSquare.position[0] and clickedSquare2.position[0]==clickedSquare.position[0]:
+                                        if clickedSquare2[1]==move.square[1] and clickedSquare2[0]==move.square[0]:
                                             print("siirto")
-
+                                            clickedSquare.setPos((move.square[0],move.square[1]))
+                                            board[move.square[0]][move.square[1]]=(board[clickedSquare.position[0]][clickedSquare.position[1]])
+                                            
+                                            board[clickedSquare.position[0]][clickedSquare.position[1]]=0
                                             break;
+                                    if clickedSquare2 == 0:
+
+                                        break;
 
                             for move in clickedSquare.moves:
 
                                 print(move)
-                                surface.blit(highlight, ((move.square[1])*sq_sz+piece_offset,(move.square[0])*sq_sz+piece_offset))
+                                surface.blit(highlight, ((move.square[1])*sq_sz+piece_offset,420-(move.square[0])*sq_sz+piece_offset))
                                 ## ruutu on pos/60 pyöristettynä alaspäin
 
                             pygame.display.update()

@@ -16,3 +16,7 @@ class Piece(object):
     
     def die(self):
         self.alive = False
+        return
+    def setPos(self, pos):
+        self.position=pos
+        return

@@ -7,6 +7,7 @@ class Piece(object):
         self.side = side
         self.position = position
         self.alive = True
+        self.hasNotMoved = True
         self.moves = []
     
     def __str__(self) -> str:
@@ -16,7 +17,10 @@ class Piece(object):
     
     def die(self):
         self.alive = False
+        self.position = (-1, -1)
         return
     def setPos(self, pos):
-        self.position=pos
+        self.position = pos
+        if self.hasNotMoved:
+            self.hasNotMoved = False
         return

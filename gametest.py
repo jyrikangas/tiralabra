@@ -1,16 +1,14 @@
 from piece import Piece
-import app
+import app as app
 import unittest
-from piece import Piece
-import app
-
+import aiPlayer as aiPlayer
 class GameTest(unittest.TestCase):
     
     def setUp(self) -> None:
         pass
 
     def test_knight(self):
-        knight = Piece("K", "w",(3,3))
+        knight = Piece("N", "w",(3,3))
         board= [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], 
         [0,0,0,0,0,0,0,0], [0,0,0,knight,0,0,0,0], 
         [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], 
@@ -65,3 +63,23 @@ class GameTest(unittest.TestCase):
         self.assertTrue(all([item in moves for item in correct]))
         self.assertFalse(any([item in moves for item in wrong]))
         
+    def test_minimax(self):
+        bP = Piece("P", "b", (7,7))
+        queen = Piece("Q", "b",(1,1))
+        queen1 = Piece("Q", "b",(1,5))
+        wP = Piece("P", "w", (1,3))
+        wK = Piece("K", "w", (1,2))
+        pieces = [bP, queen, wP, wK]
+        pieces1 = [bP, queen1, wP, wK]
+        board= [[0,queen,wK,wP,0,0,0,0], [0,0,0,0,0,0,0,0], 
+        [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], 
+        [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], 
+        [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,bP]]
+        board1 = [[0,0,wK,wP,0,queen1,0,0], [0,0,0,0,0,0,0,0], 
+        [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], 
+        [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], 
+        [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,bP]]
+        result = aiPlayer.minimax(board, pieces, 2, False)
+        result2 = aiPlayer.minimax(board1, pieces1, 2, False)
+        pass
+        self.assertTrue(result < result2)

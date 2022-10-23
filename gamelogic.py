@@ -1,5 +1,6 @@
 from move import Move
 from piece import Piece
+##pylint: disable=too-many-function-args
 def validmoves(pieces, board):
     moves = []
     for piece in pieces:
@@ -17,50 +18,50 @@ def legal(piece, board):
             ## jos sotilas on aloitusruudussa, se voi siirtyä kahteen edessä olevaan ruutuun, jos ne ovat tyhjiä
             if piece.position[0] == 1:
                 if board[2][piece.position[1]] == 0:
-                    piece.moves.append(Move((2, piece.position[1]), board[2][piece.position[1]]))
+                    piece.moves.append(Move((piece.position[0], piece.position[1]), (2, piece.position[1]), board[2][piece.position[1]]))
                 if board[3][piece.position[1]] == 0:
-                    piece.moves.append(Move((3, piece.position[1]), board[3][piece.position[1]]))
+                    piece.moves.append(Move((piece.position[0], piece.position[1]), (3, piece.position[1]), board[3][piece.position[1]]))
             
             if piece.position[0] < 7:
                 ## jos edessä oleva ruutu on tyhjä, sotilas voi liikkua eteenpäin
                 if board[piece.position[0] + 1][piece.position[1]] == 0:
-                    piece.moves.append(Move((piece.position[0] + 1, piece.position[1]), board[piece.position[0]+1][piece.position[1]]))
+                    piece.moves.append(Move((piece.position[0], piece.position[1]), (piece.position[0] + 1, piece.position[1]), board[piece.position[0]+1][piece.position[1]]))
                 ## nämä rivit tarkastavat onko nappula laudan reunalla, ja jos laudalla olevalla etuviistossa sijaitsevalla ruudulla on vastapuolen nappula, se voidaan lisätä siirtolistaan.
                 if piece.position[1] < 7:
                     if board[piece.position[0] + 1][piece.position[1] + 1] != 0:
                         if board[piece.position[0] + 1][piece.position[1]+1].side == "b":
-                            piece.moves.append(Move((piece.position[0] + 1,piece.position[1] + 1), board[piece.position[0] + 1][piece.position[1] + 1]))
+                            piece.moves.append(Move((piece.position[0], piece.position[1]), (piece.position[0] + 1,piece.position[1] + 1), board[piece.position[0] + 1][piece.position[1] + 1]))
                 if piece.position[1] > 0:
                     if board[piece.position[0] + 1][piece.position[1] - 1] != 0:
                         if board[piece.position[0] + 1][piece.position[1] - 1].side == "b":
-                            piece.moves.append(Move((piece.position[0] + 1, piece.position[1] - 1), board[piece.position[0] + 1][piece.position[1] - 1]))
+                            piece.moves.append(Move((piece.position[0], piece.position[1]), (piece.position[0] + 1, piece.position[1] - 1), board[piece.position[0] + 1][piece.position[1] - 1]))
                 ##ylennys
             if piece.position[0] == 7:
-                piece.moves.append(Move.makePromotion((piece.position), piece, True))
+                piece.moves.append(Move.makePromotion((piece.position),(piece.position), piece, True))
                     
             
         else:
             ## jos sotilas (musta) on aloitusruudussa, se voi siirtyä kahteen edessä olevaan ruutuun, jos ne ovat tyhjiä
             if piece.position[0] == 6:
                 if board[5][piece.position[1]] == 0:
-                    piece.moves.append(Move((5, piece.position[1]), board[5][piece.position[1]]))
+                    piece.moves.append(Move((piece.position[0], piece.position[1]), (5, piece.position[1]), board[5][piece.position[1]]))
                 if board[4][piece.position[1]] == 0:
-                    piece.moves.append(Move((4, piece.position[1]), board[4][piece.position[1]]))
+                    piece.moves.append(Move((piece.position), (4, piece.position[1]), board[4][piece.position[1]]))
             ## jos edessä oleva ruutu on pelilaudalla ja tyhjä, sotilas voi liikkua eteenpäin
             if piece.position[0] > 0:
                 if board[piece.position[0] - 1][piece.position[1]] == 0:
-                    piece.moves.append(Move((piece.position[0] - 1, piece.position[1]), board[piece.position[0] - 1][piece.position[1]]))
+                    piece.moves.append(Move((piece.position), (piece.position[0] - 1, piece.position[1]), board[piece.position[0] - 1][piece.position[1]]))
                 ## nämä rivit tarkastavat onko nappula laudan reunalla, ja jos laudalla olevalla etuviistossa sijaitsevalla ruudulla on vastapuolen nappula, se voidaan lisätä siirtolistaan.
                 if piece.position[1] < 7:
                     if board[piece.position[0] - 1][piece.position[1] + 1] != 0:
                         if board[piece.position[0] - 1][piece.position[1] + 1].side == "w":
-                            piece.moves.append(Move((piece.position[0] - 1, piece.position[1] + 1), board[piece.position[0] - 1][piece.position[1] + 1]))
+                            piece.moves.append(Move((piece.position), (piece.position[0] - 1, piece.position[1] + 1), board[piece.position[0] - 1][piece.position[1] + 1]))
                 if piece.position[1] > 0:
                     if board[piece.position[0] - 1][piece.position[1] - 1] != 0:
                         if board[piece.position[0] - 1][piece.position[1] - 1].side == "w":
-                            piece.moves.append(Move((piece.position[0] - 1,piece.position[1] - 1), board[piece.position[0] - 1][piece.position[1] - 1]))
+                            piece.moves.append(Move((piece.position), (piece.position[0] - 1,piece.position[1] - 1), board[piece.position[0] - 1][piece.position[1] - 1]))
             if piece.position[0] == 0:
-               piece.moves.append(Move.makePromotion((piece.position), piece, True))
+               piece.moves.append(Move.makePromotion((piece.position), (piece.position), piece, True))
 
     if piece.char == "R":
         rook(piece, board)
@@ -76,36 +77,37 @@ def legal(piece, board):
     return 
 
 def king(piece, board):
+    ##castling/linnoitus
     if piece.hasNotMoved:
         if piece.side == "w":
             if board[0][0] != 0:
                 if board[0][0].hasNotMoved:
                     if board[0][1] == 0 and board[0][2] == 0 and board [0][3] == 0:
-                        piece.moves.append(Move((0,0), board[0][0]))
+                        piece.moves.append(Move((piece.position), (0,0), board[0][0]))
             if board[0][7] != 0:
                 if board[0][7].hasNotMoved:
                     if board[0][5] == 0 and board[0][6] == 0:
-                        piece.moves.append(Move((0,7), board[0][7]))
+                        piece.moves.append(Move((piece.position), (0,7), board[0][7]))
         else:
             if board[7][0] != 0:
                 if board[7][0].hasNotMoved:
                     if board[7][1] == 0 and board[7][2] == 0 and board [7][3] == 0:
-                        piece.moves.append(Move((7,0), board[7][0]))
+                        piece.moves.append(Move((piece.position), (7,0), board[7][0]))
             if board[7][7] != 0:
                 if board[7][7].hasNotMoved:
                     if board[7][5] == 0 and board[7][6] == 0:
-                        piece.moves.append(Move((7,7), board[7][7]))
-    x = max(piece.position[0]-1,0)
-    y = max(piece.position[1]-1,0)
-    xend = min(piece.position[0]+1,7)
-    yend = min(piece.position[1]+1,7)
+                        piece.moves.append(Move((piece.position), (7,7), board[7][7]))
+    x = max(piece.position[0] - 1, 0)
+    y = max(piece.position[1] - 1, 0)
+    xend = min(piece.position[0] + 1, 7)
+    yend = min(piece.position[1] + 1, 7)
     while(x <= xend):
         while(y <= yend):
             if board[x][y] == 0:
-                piece.moves.append(Move((x, y), board[x][y]))
+                piece.moves.append(Move((piece.position), (x, y), board[x][y]))
                 y += 1
             elif board[x][y].side != piece.side:
-                piece.moves.append(Move((x, y), board[x][y]))
+                piece.moves.append(Move((piece.position), (x, y), board[x][y]))
                 y += 1
             else:
                 y += 1
@@ -119,10 +121,10 @@ def rook(piece, board):
     ##käy läpi ruudut samassa sarakkeessa nappulan yläpuolella
     while y < 8:
         if board[piece.position[0]][y] == 0:
-            piece.moves.append(Move((piece.position[0], y), board[piece.position[0]][y]))
+            piece.moves.append(Move((piece.position), (piece.position[0], y), board[piece.position[0]][y]))
             y+=1
         elif board[piece.position[0]][y].side != piece.side:
-            piece.moves.append(Move((piece.position[0],y), board[piece.position[0]][y]))
+            piece.moves.append(Move((piece.position), (piece.position[0],y), board[piece.position[0]][y]))
             y = 9  
         else:
             y=9  
@@ -132,10 +134,10 @@ def rook(piece, board):
     ##käy läpi rivin ruudut nappulan oikealla puolella 
     while x < 8:
         if board[x][piece.position[1]] == 0:
-            piece.moves.append(Move((x, piece.position[1]), board[x][piece.position[1]]))
+            piece.moves.append(Move((piece.position), (x, piece.position[1]), board[x][piece.position[1]]))
             x += 1
         elif board[x][piece.position[1]].side != piece.side:
-            piece.moves.append(Move((x, piece.position[1]),board[x][piece.position[1]]))
+            piece.moves.append(Move((piece.position), (x, piece.position[1]),board[x][piece.position[1]]))
             x=8            
         else:
             x=8 
@@ -146,10 +148,10 @@ def rook(piece, board):
     ##käy läpi sarakkeen ruudut nappulan alapuolelta
     while y >= 0:
         if board[piece.position[0]][y] == 0:
-            piece.moves.append(Move((piece.position[0], y), board[piece.position[0]][y]))
+            piece.moves.append(Move((piece.position), (piece.position[0], y), board[piece.position[0]][y]))
             y -=1 
         elif board[piece.position[0]][y].side != piece.side:
-            piece.moves.append(Move((piece.position[0], y), board[piece.position[0]][y]))
+            piece.moves.append(Move((piece.position), (piece.position[0], y), board[piece.position[0]][y]))
             y=-1  
         else:
             y=-1
@@ -158,10 +160,10 @@ def rook(piece, board):
     ##rivin ruudut nappulan vasemmalta
     while x >= 0:
         if board[x][piece.position[1]] == 0:
-            piece.moves.append(Move((x, piece.position[1]), board[x][piece.position[1]]))
+            piece.moves.append(Move((piece.position), (x, piece.position[1]), board[x][piece.position[1]]))
             x-=1
         elif board[x][piece.position[1]].side != piece.side:
-            piece.moves.append(Move((x, piece.position[1]), board[x][piece.position[1]]))
+            piece.moves.append(Move((piece.position), (x, piece.position[1]), board[x][piece.position[1]]))
             x=-1            
         else:
             x=-1
@@ -172,11 +174,11 @@ def bishop(piece, board):
     y = piece.position[1]+1
     while(x<8 and y<8):
         if board[x][y]==0:
-            piece.moves.append(Move((x, y), board[x][y]))
+            piece.moves.append(Move((piece.position), (x, y), board[x][y]))
             x+=1
             y+=1
         elif board[x][y].side!=piece.side:
-            piece.moves.append(Move((x,y),board[x][y]))
+            piece.moves.append(Move((piece.position), (x,y),board[x][y]))
             x=9
         else:
             x=9
@@ -184,11 +186,11 @@ def bishop(piece, board):
     y=piece.position[1]-1
     while(x>=0 and y>=0):
         if board[x][y]==0:
-            piece.moves.append(Move((x,y),board[x][y]))
+            piece.moves.append(Move((piece.position), (x,y),board[x][y]))
             x-=1
             y-=1
         elif board[x][y].side!=piece.side:
-            piece.moves.append(Move((x,y),board[x][y]))
+            piece.moves.append(Move((piece.position), (x,y),board[x][y]))
             x=-1
         else:
             x=-1
@@ -197,11 +199,11 @@ def bishop(piece, board):
     y=piece.position[1]-1
     while(x<8 and y>=0):
         if board[x][y]==0:
-            piece.moves.append(Move((x,y),board[x][y]))
+            piece.moves.append(Move((piece.position), (x,y),board[x][y]))
             x+=1
             y-=1
         elif board[x][y].side!=piece.side:
-            piece.moves.append(Move((x,y),board[x][y]))
+            piece.moves.append(Move((piece.position), (x,y),board[x][y]))
             x=9
         else:
             x=9
@@ -210,64 +212,64 @@ def bishop(piece, board):
     y = piece.position[1]+1
     while(x>=0 and y<8):
         if board[x][y]==0:
-            piece.moves.append(Move((x,y),board[x][y]))
+            piece.moves.append(Move((piece.position), (x,y),board[x][y]))
             x-=1
             y+=1
         elif board[x][y].side!=piece.side:
-            piece.moves.append(Move((x,y),board[x][y]))
+            piece.moves.append(Move((piece.position), (x,y),board[x][y]))
             x=-1
         else:
             x=-1
     return
 
 def knight(piece, board):
-    top=7-piece.position[0]
-    bot=piece.position[0]
-    right=7-piece.position[1]
-    left=piece.position[1]
-    if top>=2 and right >=1:
-        if board[piece.position[0]+2][piece.position[1]+1] ==0:
-            piece.moves.append(Move((piece.position[0]+2,piece.position[1]+1), board[piece.position[0]+2][piece.position[1]+1]))
+    top = 7 - piece.position[0]
+    bot = piece.position[0]
+    right = 7 - piece.position[1]
+    left = piece.position[1]
+    if top >= 2 and right >= 1:
+        if board[piece.position[0] +2][piece.position[1] + 1] == 0:
+            piece.moves.append(Move((piece.position), (piece.position[0]+2,piece.position[1]+1), board[piece.position[0]+2][piece.position[1]+1]))
         elif board[piece.position[0]+2][piece.position[1]+1].side != piece.side:
-            piece.moves.append(Move((piece.position[0]+2,piece.position[1]+1), board[piece.position[0]+2][piece.position[1]+1]))
-    if top>=2 and left >=1:
-        if board[piece.position[0]+2][piece.position[1]-1] ==0:
-            piece.moves.append(Move((piece.position[0]+2,piece.position[1]-1), board[piece.position[0]+2][piece.position[1]-1]))
+            piece.moves.append(Move((piece.position), (piece.position[0] + 2, piece.position[1] + 1), board[piece.position[0] + 2][piece.position[1] + 1]))
+    if top >= 2 and left >= 1:
+        if board[piece.position[0]+2][piece.position[1]-1] == 0:
+            piece.moves.append(Move((piece.position), (piece.position[0]+2,piece.position[1]-1), board[piece.position[0]+2][piece.position[1]-1]))
         elif board[piece.position[0]+2][piece.position[1]-1].side != piece.side:
-            piece.moves.append(Move((piece.position[0]+2,piece.position[1]-1), board[piece.position[0]+2][piece.position[1]-1]))
+            piece.moves.append(Move((piece.position), (piece.position[0]+2,piece.position[1]-1), board[piece.position[0]+2][piece.position[1]-1]))
         
-    if top>=1 and right >=2:
-        if board[piece.position[0]+1][piece.position[1]+2] ==0:
-            piece.moves.append(Move((piece.position[0]+1,piece.position[1]+2), board[piece.position[0]+1][piece.position[1]+2]))
+    if top >= 1 and right >= 2:
+        if board[piece.position[0]+1][piece.position[1]+2] == 0:
+            piece.moves.append(Move((piece.position), (piece.position[0]+1,piece.position[1]+2), board[piece.position[0]+1][piece.position[1]+2]))
         elif board[piece.position[0]+1][piece.position[1]+2].side != piece.side:
-            piece.moves.append(Move((piece.position[0]+1,piece.position[1]+2), board[piece.position[0]+1][piece.position[1]+2]))
-    if top>=1 and left >=2:
-        if board[piece.position[0]+1][piece.position[1]-2] ==0:
-            piece.moves.append(Move((piece.position[0]+1,piece.position[1]-2), board[piece.position[0]+1][piece.position[1]-2]))
+            piece.moves.append(Move((piece.position), (piece.position[0]+1,piece.position[1]+2), board[piece.position[0]+1][piece.position[1]+2]))
+    if top >= 1 and left >= 2:
+        if board[piece.position[0]+1][piece.position[1]-2] == 0:
+            piece.moves.append(Move((piece.position), (piece.position[0]+1,piece.position[1]-2), board[piece.position[0]+1][piece.position[1]-2]))
         elif board[piece.position[0]+1][piece.position[1]-2].side != piece.side:
-            piece.moves.append(Move((piece.position[0]+1,piece.position[1]-2), board[piece.position[0]+1][piece.position[1]-2]))
+            piece.moves.append(Move((piece.position), (piece.position[0]+1,piece.position[1]-2), board[piece.position[0]+1][piece.position[1]-2]))
     
-    if bot>=2 and right >=1:
+    if bot >= 2 and right >= 1:
         if board[piece.position[0]-2][piece.position[1]+1] ==0:
-            piece.moves.append(Move((piece.position[0]-2,piece.position[1]+1), board[piece.position[0]-2][piece.position[1]+1]))
+            piece.moves.append(Move((piece.position), (piece.position[0]-2,piece.position[1]+1), board[piece.position[0]-2][piece.position[1]+1]))
         elif board[piece.position[0]-2][piece.position[1]+1].side != piece.side:
-            piece.moves.append(Move((piece.position[0]-2,piece.position[1]+1), board[piece.position[0]-2][piece.position[1]+1]))
-    if bot>=2 and left >=1:
+            piece.moves.append(Move((piece.position), (piece.position[0]-2,piece.position[1]+1), board[piece.position[0]-2][piece.position[1]+1]))
+    if bot >= 2 and left >= 1:
         if board[piece.position[0]-2][piece.position[1]-1] ==0:
-            piece.moves.append(Move((piece.position[0]-2,piece.position[1]-1), board[piece.position[0]-2][piece.position[1]-1]))
+            piece.moves.append(Move((piece.position), (piece.position[0]-2,piece.position[1]-1), board[piece.position[0]-2][piece.position[1]-1]))
         elif board[piece.position[0]-2][piece.position[1]-1].side != piece.side:
-            piece.moves.append(Move((piece.position[0]-2,piece.position[1]-1), board[piece.position[0]-2][piece.position[1]-1]))
+            piece.moves.append(Move((piece.position), (piece.position[0]-2,piece.position[1]-1), board[piece.position[0]-2][piece.position[1]-1]))
         
     if bot >= 1 and right >= 2:
         if board[piece.position[0] - 1][piece.position[1] + 2] == 0:
-            piece.moves.append(Move((piece.position[0] - 1, piece.position[1] + 2), board[piece.position[0] - 1][piece.position[1] + 2]))
+            piece.moves.append(Move((piece.position), (piece.position[0] - 1, piece.position[1] + 2), board[piece.position[0] - 1][piece.position[1] + 2]))
         elif board[piece.position[0] - 1][piece.position[1] + 2].side != piece.side:
-            piece.moves.append(Move((piece.position[0] - 1, piece.position[1] + 2), board[piece.position[0] - 1][piece.position[1] + 2]))
+            piece.moves.append(Move((piece.position), (piece.position[0] - 1, piece.position[1] + 2), board[piece.position[0] - 1][piece.position[1] + 2]))
     if bot >= 1 and left >= 2:
         if board[piece.position[0] - 1][piece.position[1] - 2] == 0:
-            piece.moves.append(Move((piece.position[0] - 1,piece.position[1] - 2), board[piece.position[0] - 1][piece.position[1] - 2]))
+            piece.moves.append(Move((piece.position), (piece.position[0] - 1,piece.position[1] - 2), board[piece.position[0] - 1][piece.position[1] - 2]))
         elif board[piece.position[0] - 1][piece.position[1] - 2].side != piece.side:
-            piece.moves.append(Move((piece.position[0] -1 , piece.position[1] - 2), board[piece.position[0] - 1][piece.position[1] - 2]))
+            piece.moves.append(Move((piece.position), (piece.position[0] -1 , piece.position[1] - 2), board[piece.position[0] - 1][piece.position[1] - 2]))
     return
 ##ottaa käyttäjän valinnan siitä miksi nappulaksi sotilas ylennetään ja toteuttaa ylennyksen
 def promotion(piece, board):
@@ -285,4 +287,3 @@ def promotion(piece, board):
         elif choice == "B":
             piece.char = "B"
             return
-        

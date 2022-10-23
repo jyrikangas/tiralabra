@@ -1,7 +1,8 @@
 
 
 class Move(object):
-    def __init__(self, square, squarecontent):
+    def __init__(self, origin, square, squarecontent):
+        self.origin = origin
         self.square = square
         self.promotion = False
         if squarecontent != 0:
@@ -15,8 +16,8 @@ class Move(object):
         return
         
     @classmethod
-    def makePromotion(cls, square, squarecontent, promotion):
-        move = cls(square, squarecontent)
+    def makePromotion(cls, origin, square, squarecontent, promotion):
+        move = cls(origin, square, squarecontent)
         move.set_promotion(promotion)
         return move
     

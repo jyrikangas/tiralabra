@@ -21,3 +21,4 @@ class AiPlayerTest(unittest.TestCase):
         result2 = aiPlayer.minimax(board, bP, 1, True)
         breakpoint
         self.assertTrue(result > result2)
+        

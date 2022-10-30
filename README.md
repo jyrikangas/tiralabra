@@ -1,6 +1,11 @@
 # tiralabra
-tiralabra shakki tekoäly
+Tiralabra kurssia varten tuotettu minmax+alphabetakarsinnalla toimiva shakkitekoäly.
 
+[Käyttöohje](https://github.com/jyrikangas/tiralabra/blob/main/kayttohje.md)
+
+[toteutusdokumentti](https://github.com/jyrikangas/tiralabra/blob/main/toteutusdokumentti.md)
+
+[testausdokumentti](https://github.com/jyrikangas/tiralabra/blob/main/testausdokumentti.md)
 
 [määrittelydokumentti](https://github.com/jyrikangas/tiralabra/blob/main/maaritteludokumentti.md)
 

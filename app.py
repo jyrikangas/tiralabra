@@ -2,7 +2,7 @@
 
 
 import pygame
-from aiPlayer import chooseMove2, doMove
+from aiPlayer import chooseMove2, doMove, promotion
 from gamelogic import *
 from pygame.locals import *
 from piece import Piece
@@ -57,16 +57,13 @@ def main():
     [bP1,bP2,bP3,bP4,bP5,bP6,bP7,bP8], [bR,bN,bB,bQ,bK,bB2,bN2,bR2]]
 
     pygame.init()
-    colors = [(255,0,0), (0,0,0)]  
-    main_surface = pygame.display.set_mode((480,240))
-    n = len(board)         # This is an NxN chess board.
-    surface_sz = 480           # Proposed physical surface size.
-    sq_sz = surface_sz // n    # sq_sz is length of a square.
-    surface_sz = n * sq_sz     # Adjust to exactly fit n squares.
-    # Create the surface of (width, height), and its window.
+    colors = [(255,0,0), (0,0,0)] 
+    n = len(board) #ruudukon koko
+    surface_sz = 480  
+    sq_sz = surface_sz // n   #yhden ruudun koko
     surface = pygame.display.set_mode((surface_sz, surface_sz))
+    #nappuloiden ja siirtomerkin kuvat
     highlight = pygame.image.load("highlight.png")
-    piec = pygame.image.load("piece.png")
     whiterook = pygame.image.load("whiterook.png")
     blackrook = pygame.image.load("blackrook.png")
     whitepawn = pygame.image.load("whitepawn.png")
@@ -79,9 +76,7 @@ def main():
     blackhorse = pygame.image.load("blackhorse.png")
     whiteking = pygame.image.load("whiteking.png")
     blackking = pygame.image.load("blackking.png")
-    # Use an extra offset to centre the  in its square.
-    # If the square is too small, offset becomes negative,
-    #   but it will still be centered :-)
+    #jotta nappulat olisivat ruudun sisällä
     piece_offset = (sq_sz-whiterook.get_width()) // 2
 
 
@@ -91,6 +86,7 @@ def main():
     gameover=False
     winner=""
     while True:
+        #piirtää ruudukon
         for row in range(n):
             c_indx = row % 2
             for col in range(n):     
@@ -106,7 +102,7 @@ def main():
             if ev.button == 1:
                 print(pygame.mouse.get_pos())
                 clickedSquare = board[7-int(pygame.mouse.get_pos()[1]/60)][int(pygame.mouse.get_pos()[0]/60)]
-                
+                #hakee siirrot klikatulle nappulalle
                 if not move_selected_flag and clickedSquare!=0:
                     if clickedSquare.side == turn:
                         move_selected_flag = True
@@ -117,11 +113,14 @@ def main():
                     print(pygame.mouse.get_pos())
                     clickedSquare2 = (7-int(pygame.mouse.get_pos()[1]/60),int(pygame.mouse.get_pos()[0]/60))
                     print(clickedSquare2)
-                       
+                    #tarkistaa toteutetaanko siirto toisella klikkauksella
                     for move in selectedMove.moves:
+                        #Tarkistetaanko onko siirto valittu ja jos on toteutetaan se
                         if clickedSquare2[1] == move.square[1] and clickedSquare2[0] == move.square[0]:
                             if move.promotion:
+                                promotion(board[clickedSquare[0]][clickedSquare[1]],board)
                                 break
+                            #jos siirron päämärässä on nappula
                             if(board[clickedSquare2[0]][clickedSquare2[1]] != 0):
                                 
                                 ##linnoittaminen
@@ -146,17 +145,20 @@ def main():
                                         
                                 else:
                                     deleted = move.capture
-                                    if move.capture != 0:
-                                        if move.capture.side == "b" and move.capture.char == "K":
-                                            gameover=True
-                                            winner="white"
+                                    #tarkistetaanko loppuuko peli
+                                    if move.capture.side == "b" and move.capture.char == "K":
+                                        gameover=True
+                                        winner="white"
                                     deleted.die()
                                     pieces.remove(deleted)
+                                    #siirretään nappula
                                     board[move.square[0]][move.square[1]] = selectedMove
+                                    #poistetaan vanha
                                     board[selectedMove.position[0]][selectedMove.position[1]] = 0
                                     selectedMove.setPos((move.square[0], move.square[1]))
                                     move_selected_flag = False
                             else:
+                                
                                 board[move.square[0]][move.square[1]] = selectedMove
                                 board[selectedMove.position[0]][selectedMove.position[1]] = 0
                                 selectedMove.setPos((move.square[0], move.square[1]))

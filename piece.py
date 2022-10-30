@@ -13,6 +13,7 @@ class Piece(object):
         self.position = position
         self.alive = True
         self.hasNotMoved = True
+        self.cantmove = False
         self.moves = []
     
     def __str__(self) -> str:
@@ -24,6 +25,10 @@ class Piece(object):
     def die(self):
         self.alive = False
         self.position = (-1, -1)
+        return
+    ##maalitaulu testaustarkoitukseen
+    def target(self):
+        self.cantmove=True
         return
 
     ##käytetään nappulan sijainnin päivittämiseen

@@ -53,8 +53,10 @@ def alphabeta(board, depth, alpha, beta, maximizing_player):
         return boardValue(board)
     for pieces in board:
         for piece in pieces:
-            if piece != 0: 
+            if piece != 0:
                 legal(piece, board)
+                if piece.cantmove:
+                    piece.moves = []
                 if piece.moves != []:
                     no_moves = False
                 if piece.char == "K" and piece.side=="w":
@@ -73,6 +75,7 @@ def alphabeta(board, depth, alpha, beta, maximizing_player):
                         for move in piece.moves:
                             newboard = copy.deepcopy(board)
                             donemove = doMove(piece, move, newboard)
+                            
                             evalu = alphabeta(donemove[2], depth - 1, alpha, beta, False)
                             value = max(value, evalu)
                             alpha = max(alpha, evalu)
@@ -116,7 +119,7 @@ def chooseMove2(board):
                     for move in piece.moves:
                         newboard = copy.deepcopy(board)
                         donemove = doMove(copy.deepcopy(piece), move, newboard)
-                        move.setValue(alphabeta(donemove[2], 3,-999999999, 999999999, False))
+                        move.setValue(alphabeta(donemove[2], 2,-999999999, 999999999, False))
 
                         if a:
                             bestmove = [piece, move]

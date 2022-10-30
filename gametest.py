@@ -133,52 +133,7 @@ class GameTest(unittest.TestCase):
         result = aiPlayer.chooseMove2(board)
         self.assertTrue(result[1].promotion)
         
-    def test_alpha_beta(self):
-        white_rook = Piece("R", "w", (0, 0))
-        white_knight = Piece("N", "w", (0, 1))
-        white_bishop = Piece("B", "w", (0, 2))
-        white_queen = Piece("Q", "w", (0, 3))
-        white_king = Piece("K", "w", (0, 4))
-        white_bishop2 = Piece("B", "w", (0, 5))
-        white_knight2 = Piece("N", "w",(0,6))
-        white_rook_2 = Piece("R", "w",(0,7))
-        white_pawn_1 = Piece("P","w",(1,0))
-        white_pawn_2 = Piece("P","w",(1,1))
-        white_pawn_3 = Piece("P","w",(1,2))
-        white_pawn_4 = Piece("P","w",(1,3))
-        white_pawn_5 = Piece("P","w",(1,4))
-        white_pawn_6 = Piece("P","w",(1,5))
-        white_pawn_7 = Piece("P","w",(1,6))
-        white_pawn_8 = Piece("P","w",(1,7))
 
-        bR = Piece("R", "b",(7,0))
-        bN = Piece("N", "b",(7,1))
-        bB = Piece("B", "b",(7,2))
-        bQ = Piece("Q", "b",(7,3))
-        bK = Piece("K", "b",(7,4))
-        bB2 = Piece("B", "b",(7,5))
-        bN2 = Piece("N", "b",(7,6))
-        bR2 = Piece("R", "b",(7,7))
-        bP1 = Piece("P","b",(6,0))
-        bP2 = Piece("P","b",(6,1))
-        bP3 = Piece("P","b",(6,2))
-        bP4 = Piece("P","b",(6,3))
-        bP5 = Piece("P","b",(6,4))
-        bP6 = Piece("P","b",(6,5))
-        bP7 = Piece("P","b",(6,6))
-        bP8 = Piece("P","b",(6,7))
-
-        ##listat molempien pelaajien nappuloista
-        whitepieces = (white_rook,white_knight,white_bishop,white_queen,white_king,white_bishop2,white_knight2,white_rook_2, white_pawn_1,white_pawn_2,white_pawn_3,white_pawn_4,white_pawn_5,white_pawn_6,white_pawn_7,white_pawn_8)
-        blackpieces = (bR,bN,bB,bQ,bK,bB2,bN2,bR2, bP1,bP2,bP3,bP4,bP5,bP6,bP7,bP8)
-        pieces = [white_rook,white_knight,white_bishop,white_queen,white_king,white_bishop2,white_knight2,white_rook_2, white_pawn_1,white_pawn_2,white_pawn_3,white_pawn_4,white_pawn_5,white_pawn_6,white_pawn_7,white_pawn_8, bR,bN,bB,bQ,bK,bB2,bN2,bR2, bP1,bP2,bP3,bP4,bP5,bP6,bP7,bP8]
-        ##pelilauta
-        board = [[white_rook,white_knight,white_bishop,white_queen,white_king,white_bishop2,white_knight2,white_rook_2], [white_pawn_1,white_pawn_2,white_pawn_3,white_pawn_4,white_pawn_5,white_pawn_6,white_pawn_7,white_pawn_8],
-        [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0],
-        [bP1,bP2,bP3,bP4,bP5,bP6,bP7,bP8], [bR,bN,bB,bQ,bK,bB2,bN2,bR2]]
-        res2 = aiPlayer.chooseMove2(copy.deepcopy(board))
-        self.assertTrue(res1 == res2)
 
     def test_win_in_1(self):
         king = Piece("K", "w",(0,1))
@@ -197,14 +152,18 @@ class GameTest(unittest.TestCase):
         aiPlayer.doMove(res[0],res[1],board)
         self.assertTrue(king.alive == False)
 
-    def test_win_in_3(self):
-        king = Piece("K", "w",(0,1))
+    def test_win_in_depth_3(self):
+        king = Piece("K", "w",(1,1))
+        bK = Piece("K", "b",(6,7))
         pawn = Piece("P","b",(3,2))
         wP = Piece("P","w",(2,1))
-        board= [[0, king,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], 
+        king.target()
+        bK.target()
+
+        board= [[0, 0,0,0,0,0,0,0], [0,king,0,0,0,0,0,0], 
         [0,wP,0,0,0,0,0,0], [0,0,pawn,0,0,0,0,0], 
         [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], 
-        [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0]]
+        [0,0,0,0,0,0,0,bK], [0,0,0,0,0,0,0,0]]
         res = aiPlayer.chooseMove2(board)
         self.assertTrue(res[1].square == (2,2))
 

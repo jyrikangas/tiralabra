@@ -111,6 +111,7 @@ def king(piece, board):
                 y += 1
             else:
                 y += 1
+        y = max(piece.position[1] - 1, 0)
         x += 1
     return
 
@@ -222,7 +223,9 @@ def bishop(piece, board):
             x=-1
     return
 
+##käy läpi ruudut joihin ratsu voi siirtyä
 def knight(piece, board):
+    
     top = 7 - piece.position[0]
     bot = piece.position[0]
     right = 7 - piece.position[1]
@@ -271,6 +274,7 @@ def knight(piece, board):
         elif board[piece.position[0] - 1][piece.position[1] - 2].side != piece.side:
             piece.moves.append(Move((piece.position), (piece.position[0] -1 , piece.position[1] - 2), board[piece.position[0] - 1][piece.position[1] - 2]))
     return
+
 ##ottaa käyttäjän valinnan siitä miksi nappulaksi sotilas ylennetään ja toteuttaa ylennyksen
 def promotion(piece, board):
     while True:

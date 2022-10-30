@@ -1,9 +1,8 @@
 ##pylint: disable=too-many-function-args
 
 
-from xml import dom
 import pygame
-from aiPlayer import chooseMove, doMove
+from aiPlayer import chooseMove2, doMove
 from gamelogic import *
 from pygame.locals import *
 from piece import Piece
@@ -49,20 +48,13 @@ def main():
     bP7 = Piece("P","b",(6,6))
     bP8 = Piece("P","b",(6,7))
 
-    ##listat molempien pelaajien nappuloista
-    whitepieces = (white_rook,white_knight,white_bishop,white_queen,white_king,white_bishop2,white_knight2,white_rook_2, white_pawn_1,white_pawn_2,white_pawn_3,white_pawn_4,white_pawn_5,white_pawn_6,white_pawn_7,white_pawn_8)
-    blackpieces = (bR,bN,bB,bQ,bK,bB2,bN2,bR2, bP1,bP2,bP3,bP4,bP5,bP6,bP7,bP8)
+    ##lista nappuloista
     pieces = [white_rook,white_knight,white_bishop,white_queen,white_king,white_bishop2,white_knight2,white_rook_2, white_pawn_1,white_pawn_2,white_pawn_3,white_pawn_4,white_pawn_5,white_pawn_6,white_pawn_7,white_pawn_8, bR,bN,bB,bQ,bK,bB2,bN2,bR2, bP1,bP2,bP3,bP4,bP5,bP6,bP7,bP8]
     ##pelilauta
     board = [[white_rook,white_knight,white_bishop,white_queen,white_king,white_bishop2,white_knight2,white_rook_2], [white_pawn_1,white_pawn_2,white_pawn_3,white_pawn_4,white_pawn_5,white_pawn_6,white_pawn_7,white_pawn_8],
     [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0],
     [bP1,bP2,bP3,bP4,bP5,bP6,bP7,bP8], [bR,bN,bB,bQ,bK,bB2,bN2,bR2]]
-    print(board)
-
-    ## aloita loop
-    ## luo kuva, kutsu metodeja, ota input, tee siirto, päivitä kuva, repeat.
-    ## lopetus?
 
     pygame.init()
     colors = [(255,0,0), (0,0,0)]  
@@ -96,15 +88,16 @@ def main():
     move_selected_flag = False
     selectedMove = None
     turn = "w"
+    gameover=False
+    winner=""
     while True:
-        for row in range(n):           # Draw each row of the board.
-            c_indx = row % 2           # Alternate starting color
-            for col in range(n):       # Run through cols drawing squares
+        for row in range(n):
+            c_indx = row % 2
+            for col in range(n):     
                 the_square = (col*sq_sz, row*sq_sz, sq_sz, sq_sz)
                 surface.fill(colors[c_indx], the_square)
-               # Now flip the color index for the next square
                 c_indx = (c_indx + 1) % 2
-            # Look for an event from keyboard, mouse, etc.
+            
         ev = pygame.event.poll()
         if ev.type == pygame.QUIT:
             break;
@@ -141,7 +134,7 @@ def main():
                                         board[pos[0]][5] = move.capture
                                         board[clickedSquare2[0]][clickedSquare2[1]] = 0
                                         board[pos[0]][pos[1]] = 0
-                                        break
+                                        
                                     else:
                                         pos = selectedMove.position
                                         selectedMove.setPos((pos[0], 1))
@@ -150,9 +143,13 @@ def main():
                                         board[pos[0]][2] = move.capture
                                         board[clickedSquare2[0]][clickedSquare2[1]] = 0
                                         board[pos[0]][pos[1]] = 0
-                                        break
+                                        
                                 else:
                                     deleted = move.capture
+                                    if move.capture != 0:
+                                        if move.capture.side == "b" and move.capture.char == "K":
+                                            gameover=True
+                                            winner="white"
                                     deleted.die()
                                     pieces.remove(deleted)
                                     board[move.square[0]][move.square[1]] = selectedMove
@@ -189,9 +186,6 @@ def main():
                         if board[i][j].char == "Q":
                             surface.blit(whiteQueen, ((j) * sq_sz + piece_offset, 420 - (i) * sq_sz + piece_offset))
                         if board[i][j].char == "K":
-                            if not board[i][j].alive:
-                                ##end game
-                                pygame.quit()
                             surface.blit(whiteking, ((j) * sq_sz + piece_offset, 420 - (i) * sq_sz + piece_offset))
                         if board[i][j].char == "B":
                             surface.blit(whitebishop, ((j) * sq_sz + piece_offset, 420 - (i) * sq_sz + piece_offset))
@@ -205,9 +199,6 @@ def main():
                         if board[i][j].char == "Q":
                             surface.blit(blackQueen, ((j)*sq_sz+piece_offset, 420-(i)*sq_sz-piece_offset))
                         if board[i][j].char == "K":
-                            if not board[i][j].alive:
-                                ##end game
-                                pygame.quit()
                             surface.blit(blackking, ((j)*sq_sz+piece_offset, (420)-(i)*sq_sz+piece_offset))
                         if board[i][j].char == "B":
                             surface.blit(blackbishop, ((j)*sq_sz+piece_offset, 420-(i)*sq_sz+piece_offset))
@@ -220,14 +211,20 @@ def main():
                     surface.blit(highlight, ((move.square[1])*sq_sz+piece_offset, 420-(move.square[0])*sq_sz+piece_offset))
         
         if turn == "b":
-            ai_turn = chooseMove(copy.deepcopy(board), copy.deepcopy(pieces))
+            ai_turn = chooseMove2(copy.deepcopy(board))
             ai_piece = ai_turn[0]
             ai_move = ai_turn[1]
-            donemove = doMove(ai_piece, ai_move, board, pieces)
+            if ai_move.capture != 0:
+                if ai_move.capture.side == "w" and ai_move.capture.char == "K":
+                    gameover=True
+                    winner="black"
+            donemove = doMove(ai_piece, ai_move, board)
             board = donemove[2]
-            pieces = donemove[3]
             turn = "w"
+        if gameover:
+            font = pygame.font.SysFont("Arial", 70)
+            game_end = font.render(winner + " wins!", True, (128, 128, 128))
+            surface.blit(game_end, (200, 200))
         pygame.display.update()
     pygame.quit()
-
 main()

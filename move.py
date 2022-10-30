@@ -1,5 +1,5 @@
 
-
+## Siirtoja kuvaava olio: origin=siirron alkuruutu, square=siirron päämääräruutu, squarecontent=nappula, joka on päämääräruudussa(jos sellainen on).
 class Move(object):
     def __init__(self, origin, square, squarecontent):
         self.origin = origin
@@ -14,7 +14,8 @@ class Move(object):
     def set_promotion(self, promotion):
         self.promotion = promotion
         return
-        
+    
+    ## metodi jolla tehdään ylennystä kuvaava siirto. erona bool promotion, joka True jos kyseessä ylennys.
     @classmethod
     def makePromotion(cls, origin, square, squarecontent, promotion):
         move = cls(origin, square, squarecontent)
@@ -23,6 +24,6 @@ class Move(object):
     
     def __repr__(self) -> str:
         return str(self.square) + "-->" + str(self.capture)
-    
+    ##value on arvo joka kuvaa siirron arvoa tekoälylle.
     def setValue(self, value):
         self.value = value
